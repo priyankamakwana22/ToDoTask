@@ -1,19 +1,17 @@
+import {ADD_NOTE} from './Action';
+
 const initialState = {
-    
-    tasks : [],
-}
+  tasks: [],
+};
 
 const reducer = (state = initialState, action) => {
-
-    
-
-    switch(action.type){
-        case 'ADD_NOTE' : 
-        return 
-    }
-
-    return state;
-}
-console.log("🚀 ~ reducer ~ action:", action)
+  console.log("🚀 ~ reducer ~ action:", action)
+  switch (action.type) {
+    case ADD_NOTE:
+      return {...state, tasks:[ ...state.tasks , action.payload]};
+    default:
+      return state;
+  }
+};
 
 export default reducer;

@@ -1,11 +1,7 @@
-import { Text, Touchable, TouchableOpacity, View } from "react-native";
-import Dashboard from "./src/screens/dashboard";
-
+import Dashboard from './src/screens/dashboard';
 
 const App = () => {
-    return(
-            <Dashboard/> 
-    );
-}
+  return <Dashboard />;
+};
 
 export default App;
