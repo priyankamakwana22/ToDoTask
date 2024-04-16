@@ -14,7 +14,6 @@ import styles from './style';
 import {useSelector, useDispatch} from 'react-redux';
 import RadioGroup from 'react-native-radio-buttons-group';
 import {addNote} from '../../redux/Action';
-import {RadioButton} from 'react-native-paper';
 
 const Dashboard = () => {
   const tasks = useSelector(state => state.tasks);
@@ -50,10 +49,14 @@ const Dashboard = () => {
     setShowModal(true);
     setTitle('');
     setDescription('');
+    setSelectedId('');
   };
 
   const closeModal = () => {
     setShowModal(false);
+    setTitle('');
+    setDescription('');
+    setSelectedId('');
   };
 
   const radioButtons = useMemo(
@@ -85,80 +88,97 @@ const Dashboard = () => {
   return (
     <View style={styles.container}>
       <View>
-      <View style={styles.txtBorder}>
-        <Text style={styles.txt}>To Do</Text>
-      </View>
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>To Do</Text>
+        </View>
 
-      <FlatList
-        data={tasks}
-        renderItem={({item}) => {
-          console.log('🚀 ~ Dashboard ~ item:', item);
-          if (item.selectedId === '1') {
-            return (
-              <View style={styles.flView}>
-                <Text numberOfLines={1} style={styles.listTitle}>{item.title}</Text>
-                <Text numberOfLines={3} style={styles.listDesc}>{item.description}</Text>
-              </View>
-            );
-          }
-        }}
-      />
+        <FlatList
+          data={tasks}
+          renderItem={({item}) => {
+            console.log('🚀 ~ Dashboard ~ item:', item);
+            if (item.selectedId === '1') {
+              return (
+                <View style={styles.flView}>
+                  <Text numberOfLines={1} style={styles.listTitle}>
+                    {item.title}
+                  </Text>
+                  <Text numberOfLines={3} style={styles.listDesc}>
+                    {item.description}
+                  </Text>
+                </View>
+              );
+            }
+          }}
+        />
 
-      <View style={styles.txtBorder}>
-        <Text style={styles.txt}>In Progress</Text>
-      </View>
-      
-      <FlatList
-        data={tasks}
-        renderItem={({item}) => {
-          console.log('🚀 ~ Dashboard ~ item:', item);
-          if (item.selectedId === '2') {
-            return (
-              <View style={styles.flView}>
-                <Text numberOfLines={1}  style={styles.listTitle}>{item.title}</Text>
-                <Text numberOfLines={3}  style={styles.listDesc}>{item.description}</Text>
-              </View>
-            );
-          }
-        }}
-      />
-      <View style={styles.txtBorder}>
-        <Text style={styles.txt}>Testing</Text>
-      </View>
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>In Progress</Text>
+        </View>
 
-      <FlatList
-        data={tasks}
-        renderItem={({item}) => {
-          console.log('🚀 ~ Dashboard ~ item:', item);
-          if (item.selectedId === '3') {
-            return (
-              <View style={styles.flView}>
-                <Text numberOfLines={1}  style={styles.listTitle}>{item.title}</Text>
-                {/* <View style={{height: 1, borderWidth:1, width:'100%', borderColor: 'gray'}} ></View> */}
-                <Text numberOfLines={3}  style={styles.listDesc}>{item.description}</Text>
-              </View>
-            );
-          }
-        }}
-      />
-      <View style={styles.txtBorder}>
-        <Text style={styles.txt}>Done</Text>
-      </View>
+        <FlatList
+          data={tasks}
+          renderItem={({item}) => {
+            console.log('🚀 ~ Dashboard ~ item:', item);
+            if (item.selectedId === '2') {
+              return (
+                <View style={styles.flView}>
+                  <Text numberOfLines={1} style={styles.listTitle}>
+                    {item.title}
+                  </Text>
+                  <Text numberOfLines={3} style={styles.listDesc}>
+                    {item.description}
+                  </Text>
+                </View>
+              );
+            }
+          }}
+        />
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>Testing</Text>
+        </View>
 
-      <FlatList
-        data={tasks}
-        renderItem={({item}) => {
-          console.log('🚀 ~ Dashboard ~ item:', item);
-          if (item.selectedId === '4') {
-            return (
-              <View style={styles.flView}>
-                <Text  numberOfLines={1} style={styles.listTitle}>{item.title}</Text>
-                <Text numberOfLines={3}  style={styles.listDesc}> {item.description}</Text>
-              </View>
-            );
-          }
-        }}
-      />
+        <FlatList
+          data={tasks}
+          renderItem={({item}) => {
+            console.log('🚀 ~ Dashboard ~ item:', item);
+            if (item.selectedId === '3') {
+              return (
+                <View style={styles.flView}>
+                  <Text numberOfLines={1} style={styles.listTitle}>
+                    {item.title}
+                  </Text>
+                  {/* <View style={{height: 1, borderWidth:1, width:'100%', borderColor: 'gray'}} ></View> */}
+                  <Text numberOfLines={3} style={styles.listDesc}>
+                    {item.description}
+                  </Text>
+                </View>
+              );
+            }
+          }}
+        />
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>Done</Text>
+        </View>
+
+        <FlatList
+          data={tasks}
+          renderItem={({item}) => {
+            console.log('🚀 ~ Dashboard ~ item:', item);
+            if (item.selectedId === '4') {
+              return (
+                <View style={styles.flView}>
+                  <Text numberOfLines={1} style={styles.listTitle}>
+                    {item.title}
+                  </Text>
+                  <Text numberOfLines={3} style={styles.listDesc}>
+                    {' '}
+                    {item.description}
+                  </Text>
+                </View>
+              );
+            }
+          }}
+        />
       </View>
       <TouchableOpacity style={styles.plusBtn} onPress={() => openModal()}>
         <FontAwesome5 name={'plus'} size={25} color={'#000000'} />
@@ -185,13 +205,18 @@ const Dashboard = () => {
               value={description}
               onChangeText={description => setDescription(description)}
             />
-            <View style={styles.radio}>
-            <RadioGroup
-              style={styles.radio}
-              radioButtons={radioButtons}
-              onPress={setSelectedId}
-              selectedId={selectedId}
-            />
+            <View style={styles.radioView}>
+              <RadioGroup
+              labelStyle={{
+
+              }}
+                radioButtons={radioButtons}
+                onPress={setSelectedId}
+                selectedId={selectedId}
+                containerStyle={{
+                  alignItems:'flex-start'
+                }}
+              />
             </View>
             {/* <View style={styles.radioGroup}>
               <View style={styles.radioButton}>
