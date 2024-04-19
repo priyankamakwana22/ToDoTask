@@ -18,7 +18,7 @@ import {addTodo} from '../../redux/Action';
 
 const Dashboard = () => {
   const todoData = useSelector(state => state.todoData);
-  console.log("🚀 ~ Dashboard ~ todoData:", todoData)
+  console.log('🚀 ~ Dashboard ~ todoData:', todoData);
 
   let dispatch = useDispatch();
 
@@ -28,28 +28,59 @@ const Dashboard = () => {
   const [update, setUpdate] = useState(false);
   const [selectedId, setSelectedId] = useState(''); // for radio button
 
-  const handleClickEvent = () => {
-    if (selectedId == '') {
-      Alert.alert('Warning !', 'Select any one from the options given');
-    } else if (title == '') {
-      Alert.alert('Warning !', 'Please enter a title for the note');
-    } else if (description == '') {
-      Alert.alert('Warning !', 'Please enter a description for the note');
+  const handleClickOnTodo = (item, index) => {
+    setUpdate(true);
+    openModal();
+    setTitle(todoData[index].title);
+    setDescription(todoData[index].description);
+    setSelectedId(todoData[index].selectedId);
+    
+  };
+  const updateDone = (item, index) => {
+    console.log('🚀 ~ updateDone ~ index:', index);
+    let newData = {
+      id: todoData[index].id,
+      title: title,
+      description: description,
+      selectedId: selectedId,
+    };
+
+    console.log('Updateed');
+    let newTodo;
+    newTodo = [...todoData];
+    newTodo[todoData[index]] = newData;
+  };
+
+  const handleAddTodo = () => {
+    {
+      if (selectedId == '') {
+        Alert.alert('Warning !', 'Select any one from the options given');
+      } else if (title == '') {
+        Alert.alert('Warning !', 'Please enter a title for the note');
+      } else if (description == '') {
+        Alert.alert('Warning !', 'Please enter a description for the note');
+      } else {
+        let newData = {
+          id: new Date().getTime().toString(36),
+          title: title,
+          description: description,
+          selectedId: selectedId,
+        };
+
+        let newTodo;
+        newTodo = [...todoData, newData];
+        dispatch(addTodo(newTodo));
+        setTitle('');
+        setDescription('');
+        setShowModal(false);
+      }
+    }
+  };
+  const handleClickEvent = (index) => {
+    if (update) {
+      handleAddTodo();
     } else {
-
-      let newData = {
-        id: new Date().getTime().toString(36),
-        title: title,
-        description: description,
-        selectedId: selectedId,
-      };
-
-      let newTodo;
-      newTodo = [...todoData, newData];
-      dispatch(addTodo(newTodo));
-      setTitle('');
-      setDescription('');
-      setShowModal(false);
+      updateDone(index)
     }
   };
 
@@ -103,182 +134,185 @@ const Dashboard = () => {
 
   return (
     // <ScrollView nestedScrollEnabled={true}>
-      <View style={styles.container}>
-        <View>
-          <View style={styles.txtBorder}>
-            <Text style={styles.txt}>To Do</Text>
-          </View>
-
-          <FlatList
-            data={todoData}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => {
-              if (item.selectedId === '1') {
-                return (
-                  <TouchableOpacity onPress={handleClickEvent}>
-                    <View style={styles.flView}>
-                      <View style={{flex: 9}}>
-                        <Text numberOfLines={1} style={styles.listTitle}>
-                          {item.title}
-                        </Text>
-                        <Text numberOfLines={3} style={styles.listDesc}>
-                          {item.description}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={{flex: 1}}
-                        onPress={() => deleteTask(item.id)}>
-                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }
-            }}
-          />
-
-          <View style={styles.txtBorder}>
-            <Text style={styles.txt}>In Progress</Text>
-          </View>
-
-          <FlatList
-            data={todoData}
-            renderItem={({item}) => {
-              if (item.selectedId === '2') {
-                return (
-                  <TouchableOpacity onPress={openModal}>
-                    <View style={styles.flView}>
-                      <View style={{flex: 9}}>
-                        <Text numberOfLines={1} style={styles.listTitle}>
-                          {item.title}
-                        </Text>
-                        <Text numberOfLines={3} style={styles.listDesc}>
-                          {item.description}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={{flex: 1}}
-                        onPress={() => deleteTask(item.id)}>
-                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }
-            }}
-          />
-          <View style={styles.txtBorder}>
-            <Text style={styles.txt}>Testing</Text>
-          </View>
-
-          <FlatList
-            data={todoData}
-            renderItem={({item}) => {
-              if (item.selectedId === '3') {
-                return (
-                  <TouchableOpacity onPress={openModal}>
-                    <View style={styles.flView}>
-                      <View style={{flex: 9}}>
-                        <Text numberOfLines={1} style={styles.listTitle}>
-                          {item.title}
-                        </Text>
-                        <Text numberOfLines={3} style={styles.listDesc}>
-                          {item.description}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={{flex: 1}}
-                        onPress={() => deleteTask(item.id)}>
-                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }
-            }}
-          />
-          <View style={styles.txtBorder}>
-            <Text style={styles.txt}>Done</Text>
-          </View>
-
-          <FlatList
-            data={todoData}
-            renderItem={({item}) => {
-              if (item.selectedId === '4') {
-                return (
-                  <TouchableOpacity onPress={openModal}>
-                    <View style={styles.flView}>
-                      <View style={{flex: 9}}>
-                        <Text numberOfLines={1} style={styles.listTitle}>
-                          {item.title}
-                        </Text>
-                        <Text numberOfLines={3} style={styles.listDesc}>
-                          {item.description}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={{flex: 1}}
-                        onPress={() => deleteTask(item.id)}>
-                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }
-            }}
-          />
+    <View style={styles.container}>
+      <View>
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>To Do</Text>
         </View>
-        <TouchableOpacity style={styles.plusBtn} onPress={() => openModal()}>
-          <FontAwesome5 name={'plus'} size={25} color={'#000000'} />
-        </TouchableOpacity>
-        <Modal
-          visible={showModal}
-          onRequestClose={() => setShowModal(false)}
-          animationType="slide"
-          transparent>
-          <TouchableOpacity
-            style={styles.centeredView}
-            onPress={() => closeModal()}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Add Note</Text>
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Title for note"
-                value={title}
-                onChangeText={title => setTitle(title)}
-              />
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Note"
-                value={description}
-                onChangeText={description => setDescription(description)}
-              />
-              <View style={styles.radioView}>
-                <RadioGroup
-                  labelStyle={{}}
-                  radioButtons={radioButtons}
-                  onPress={setSelectedId}
-                  selectedId={selectedId}
-                  containerStyle={{
-                    alignItems: 'flex-start',
-                  }}
-                />
-              </View>
 
-              <View style={styles.btns}>
-                <Pressable style={styles.modalBtn} onPress={() => closeModal()}>
-                  <Text style={styles.modalText}>Cancel</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.modalBtn}
-                  onPress={() => handleClickEvent()}>
-                  <Text style={styles.modalText}>Done</Text>
-                </Pressable>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </Modal>
+        <FlatList
+          data={todoData}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item, index}) => {
+            if (item.selectedId === '1') {
+              return (
+                <TouchableOpacity
+                  onPress={() => handleClickOnTodo(item, index)}>
+                  <View style={styles.flView}>
+                    <View style={{flex: 9}}>
+                      <Text numberOfLines={1} style={styles.listTitle}>
+                        {item.title}
+                      </Text>
+                      <Text numberOfLines={3} style={styles.listDesc}>
+                        {item.description}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{flex: 1}}
+                      onPress={() => deleteTask(item.id)}>
+                      <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              );
+            }
+          }}
+        />
+
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>In Progress</Text>
+        </View>
+
+        <FlatList
+          data={todoData}
+          renderItem={({item, index}) => {
+            if (item.selectedId === '2') {
+              return (
+                <TouchableOpacity
+                  onPress={() => handleClickOnTodo(item, index)}>
+                  <View style={styles.flView}>
+                    <View style={{flex: 9}}>
+                      <Text numberOfLines={1} style={styles.listTitle}>
+                        {item.title}
+                      </Text>
+                      <Text numberOfLines={3} style={styles.listDesc}>
+                        {item.description}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{flex: 1}}
+                      onPress={() => deleteTask(item.id)}>
+                      <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              );
+            }
+          }}
+        />
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>Testing</Text>
+        </View>
+
+        <FlatList
+          data={todoData}
+          renderItem={({item}) => {
+            if (item.selectedId === '3') {
+              return (
+                <TouchableOpacity onPress={() => handleClickOnTodo()}>
+                  <View style={styles.flView}>
+                    <View style={{flex: 9}}>
+                      <Text numberOfLines={1} style={styles.listTitle}>
+                        {item.title}
+                      </Text>
+                      <Text numberOfLines={3} style={styles.listDesc}>
+                        {item.description}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{flex: 1}}
+                      onPress={() => deleteTask(item.id)}>
+                      <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              );
+            }
+          }}
+        />
+        <View style={styles.txtBorder}>
+          <Text style={styles.txt}>Done</Text>
+        </View>
+
+        <FlatList
+          data={todoData}
+          renderItem={({item, index}) => {
+            if (item.selectedId === '4') {
+              return (
+                <TouchableOpacity
+                  onPress={() => handleClickOnTodo(item, index)}>
+                  <View style={styles.flView}>
+                    <View style={{flex: 9}}>
+                      <Text numberOfLines={1} style={styles.listTitle}>
+                        {item.title}
+                      </Text>
+                      <Text numberOfLines={3} style={styles.listDesc}>
+                        {item.description}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{flex: 1}}
+                      onPress={() => deleteTask(item.id)}>
+                      <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              );
+            }
+          }}
+        />
       </View>
+      <TouchableOpacity style={styles.plusBtn} onPress={() => openModal()}>
+        <FontAwesome5 name={'plus'} size={25} color={'#000000'} />
+      </TouchableOpacity>
+      <Modal
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+        animationType="slide"
+        transparent>
+        <TouchableOpacity
+          style={styles.centeredView}
+          onPress={() => closeModal()}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Add Note</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Title for note"
+              value={title}
+              onChangeText={title => setTitle(title)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Note"
+              value={description}
+              onChangeText={description => setDescription(description)}
+            />
+            <View style={styles.radioView}>
+              <RadioGroup
+                labelStyle={{}}
+                radioButtons={radioButtons}
+                onPress={setSelectedId}
+                selectedId={selectedId}
+                containerStyle={{
+                  alignItems: 'flex-start',
+                }}
+              />
+            </View>
+
+            <View style={styles.btns}>
+              <Pressable style={styles.modalBtn} onPress={() => closeModal()}>
+                <Text style={styles.modalText}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalBtn}
+                onPress={() => handleClickEvent()}>
+                <Text style={styles.modalText}>Done</Text>
+              </Pressable>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </View>
     // </ScrollView>
   );
 };
