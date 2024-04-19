@@ -8,22 +8,25 @@ import {
   Pressable,
   FlatList,
   Alert,
+  ScrollView,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import styles from './style';
 import {useSelector, useDispatch} from 'react-redux';
 import RadioGroup from 'react-native-radio-buttons-group';
-import {addNote} from '../../redux/Action';
+import {addTodo} from '../../redux/Action';
 
 const Dashboard = () => {
-  const tasks = useSelector(state => state.tasks);
+  const todoData = useSelector(state => state.todoData);
+  console.log("🚀 ~ Dashboard ~ todoData:", todoData)
+
   let dispatch = useDispatch();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [update, setUpdate] = useState(false);
   const [selectedId, setSelectedId] = useState(''); // for radio button
-  const [selectedValue, setSelectedValue] = useState('option1');
 
   const handleClickEvent = () => {
     if (selectedId == '') {
@@ -33,15 +36,20 @@ const Dashboard = () => {
     } else if (description == '') {
       Alert.alert('Warning !', 'Please enter a description for the note');
     } else {
-      setShowModal(false);
-      let todoData = {
+
+      let newData = {
+        id: new Date().getTime().toString(36),
         title: title,
         description: description,
         selectedId: selectedId,
       };
-      dispatch(addNote(todoData));
+
+      let newTodo;
+      newTodo = [...todoData, newData];
+      dispatch(addTodo(newTodo));
       setTitle('');
       setDescription('');
+      setShowModal(false);
     }
   };
 
@@ -59,6 +67,14 @@ const Dashboard = () => {
     setSelectedId('');
   };
 
+  // deleting the todo
+
+  const deleteTask = id => {
+    const filteredTasks = todoData.filter(task => task.id !== id);
+    console.log('🚀 ~ deleteTask ~ filteredTasks:', filteredTasks);
+    dispatch(addTodo(filteredTasks));
+    Alert.alert('Deleted', 'Task deleted successfully');
+  };
   const radioButtons = useMemo(
     () => [
       {
@@ -86,184 +102,184 @@ const Dashboard = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View>
-        <View style={styles.txtBorder}>
-          <Text style={styles.txt}>To Do</Text>
-        </View>
-
-        <FlatList
-          data={tasks}
-          renderItem={({item}) => {
-            console.log('🚀 ~ Dashboard ~ item:', item);
-            if (item.selectedId === '1') {
-              return (
-                <View style={styles.flView}>
-                  <Text numberOfLines={1} style={styles.listTitle}>
-                    {item.title}
-                  </Text>
-                  <Text numberOfLines={3} style={styles.listDesc}>
-                    {item.description}
-                  </Text>
-                </View>
-              );
-            }
-          }}
-        />
-
-        <View style={styles.txtBorder}>
-          <Text style={styles.txt}>In Progress</Text>
-        </View>
-
-        <FlatList
-          data={tasks}
-          renderItem={({item}) => {
-            console.log('🚀 ~ Dashboard ~ item:', item);
-            if (item.selectedId === '2') {
-              return (
-                <View style={styles.flView}>
-                  <Text numberOfLines={1} style={styles.listTitle}>
-                    {item.title}
-                  </Text>
-                  <Text numberOfLines={3} style={styles.listDesc}>
-                    {item.description}
-                  </Text>
-                </View>
-              );
-            }
-          }}
-        />
-        <View style={styles.txtBorder}>
-          <Text style={styles.txt}>Testing</Text>
-        </View>
-
-        <FlatList
-          data={tasks}
-          renderItem={({item}) => {
-            console.log('🚀 ~ Dashboard ~ item:', item);
-            if (item.selectedId === '3') {
-              return (
-                <View style={styles.flView}>
-                  <Text numberOfLines={1} style={styles.listTitle}>
-                    {item.title}
-                  </Text>
-                  {/* <View style={{height: 1, borderWidth:1, width:'100%', borderColor: 'gray'}} ></View> */}
-                  <Text numberOfLines={3} style={styles.listDesc}>
-                    {item.description}
-                  </Text>
-                </View>
-              );
-            }
-          }}
-        />
-        <View style={styles.txtBorder}>
-          <Text style={styles.txt}>Done</Text>
-        </View>
-
-        <FlatList
-          data={tasks}
-          renderItem={({item}) => {
-            console.log('🚀 ~ Dashboard ~ item:', item);
-            if (item.selectedId === '4') {
-              return (
-                <View style={styles.flView}>
-                  <Text numberOfLines={1} style={styles.listTitle}>
-                    {item.title}
-                  </Text>
-                  <Text numberOfLines={3} style={styles.listDesc}>
-                    {' '}
-                    {item.description}
-                  </Text>
-                </View>
-              );
-            }
-          }}
-        />
-      </View>
-      <TouchableOpacity style={styles.plusBtn} onPress={() => openModal()}>
-        <FontAwesome5 name={'plus'} size={25} color={'#000000'} />
-      </TouchableOpacity>
-      <Modal
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
-        animationType="slide"
-        transparent>
-        <TouchableOpacity
-          style={styles.centeredView}
-          onPress={() => closeModal()}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Add Note</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Title for note"
-              value={title}
-              onChangeText={title => setTitle(title)}
-            />
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Note"
-              value={description}
-              onChangeText={description => setDescription(description)}
-            />
-            <View style={styles.radioView}>
-              <RadioGroup
-              labelStyle={{
-
-              }}
-                radioButtons={radioButtons}
-                onPress={setSelectedId}
-                selectedId={selectedId}
-                containerStyle={{
-                  alignItems:'flex-start'
-                }}
-              />
-            </View>
-            {/* <View style={styles.radioGroup}>
-              <View style={styles.radioButton}>
-                <RadioButton.Android
-                  value="option1"
-                  status={selectedValue === 'option1' ? 'checked' : 'unchecked'}
-                  onPress={() => setSelectedValue('option1')}
-                  color="#007BFF"
-                />
-                <Text style={styles.radioLabel}>ReactJS</Text>
-              </View>
-
-              <View style={styles.radioButton}>
-                <RadioButton.Android
-                  value="option2"
-                  status={selectedValue === 'option2' ? 'checked' : 'unchecked'}
-                  onPress={() => setSelectedValue('option2')}
-                  color="#007BFF"
-                />
-                <Text style={styles.radioLabel}>NextJs</Text>
-              </View>
-
-              <View style={styles.radioButton}>
-                <RadioButton.Android
-                  value="option3"
-                  status={selectedValue === 'option3' ? 'checked' : 'unchecked'}
-                  onPress={() => setSelectedValue('option3')}
-                  color="#007BFF"
-                />
-                <Text style={styles.radioLabel}>React Native</Text>
-              </View>
-            </View> */}
-
-            <View style={styles.btns}>
-              <Pressable style={styles.modalBtn} onPress={() => closeModal()}>
-                <Text style={styles.modalText}>Cancel</Text>
-              </Pressable>
-              <Pressable
-                style={styles.modalBtn}
-                onPress={() => handleClickEvent()}>
-                <Text style={styles.modalText}>Done</Text>
-              </Pressable>
-            </View>
+    // <ScrollView nestedScrollEnabled={true}>
+      <View style={styles.container}>
+        <View>
+          <View style={styles.txtBorder}>
+            <Text style={styles.txt}>To Do</Text>
           </View>
+
+          <FlatList
+            data={todoData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item}) => {
+              if (item.selectedId === '1') {
+                return (
+                  <TouchableOpacity onPress={handleClickEvent}>
+                    <View style={styles.flView}>
+                      <View style={{flex: 9}}>
+                        <Text numberOfLines={1} style={styles.listTitle}>
+                          {item.title}
+                        </Text>
+                        <Text numberOfLines={3} style={styles.listDesc}>
+                          {item.description}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={{flex: 1}}
+                        onPress={() => deleteTask(item.id)}>
+                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+
+          <View style={styles.txtBorder}>
+            <Text style={styles.txt}>In Progress</Text>
+          </View>
+
+          <FlatList
+            data={todoData}
+            renderItem={({item}) => {
+              if (item.selectedId === '2') {
+                return (
+                  <TouchableOpacity onPress={openModal}>
+                    <View style={styles.flView}>
+                      <View style={{flex: 9}}>
+                        <Text numberOfLines={1} style={styles.listTitle}>
+                          {item.title}
+                        </Text>
+                        <Text numberOfLines={3} style={styles.listDesc}>
+                          {item.description}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={{flex: 1}}
+                        onPress={() => deleteTask(item.id)}>
+                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+          <View style={styles.txtBorder}>
+            <Text style={styles.txt}>Testing</Text>
+          </View>
+
+          <FlatList
+            data={todoData}
+            renderItem={({item}) => {
+              if (item.selectedId === '3') {
+                return (
+                  <TouchableOpacity onPress={openModal}>
+                    <View style={styles.flView}>
+                      <View style={{flex: 9}}>
+                        <Text numberOfLines={1} style={styles.listTitle}>
+                          {item.title}
+                        </Text>
+                        <Text numberOfLines={3} style={styles.listDesc}>
+                          {item.description}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={{flex: 1}}
+                        onPress={() => deleteTask(item.id)}>
+                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+          <View style={styles.txtBorder}>
+            <Text style={styles.txt}>Done</Text>
+          </View>
+
+          <FlatList
+            data={todoData}
+            renderItem={({item}) => {
+              if (item.selectedId === '4') {
+                return (
+                  <TouchableOpacity onPress={openModal}>
+                    <View style={styles.flView}>
+                      <View style={{flex: 9}}>
+                        <Text numberOfLines={1} style={styles.listTitle}>
+                          {item.title}
+                        </Text>
+                        <Text numberOfLines={3} style={styles.listDesc}>
+                          {item.description}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={{flex: 1}}
+                        onPress={() => deleteTask(item.id)}>
+                        <FontAwesome5 name={'trash'} size={25} color={'red'} />
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }
+            }}
+          />
+        </View>
+        <TouchableOpacity style={styles.plusBtn} onPress={() => openModal()}>
+          <FontAwesome5 name={'plus'} size={25} color={'#000000'} />
         </TouchableOpacity>
-      </Modal>
-    </View>
+        <Modal
+          visible={showModal}
+          onRequestClose={() => setShowModal(false)}
+          animationType="slide"
+          transparent>
+          <TouchableOpacity
+            style={styles.centeredView}
+            onPress={() => closeModal()}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Add Note</Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Title for note"
+                value={title}
+                onChangeText={title => setTitle(title)}
+              />
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Note"
+                value={description}
+                onChangeText={description => setDescription(description)}
+              />
+              <View style={styles.radioView}>
+                <RadioGroup
+                  labelStyle={{}}
+                  radioButtons={radioButtons}
+                  onPress={setSelectedId}
+                  selectedId={selectedId}
+                  containerStyle={{
+                    alignItems: 'flex-start',
+                  }}
+                />
+              </View>
+
+              <View style={styles.btns}>
+                <Pressable style={styles.modalBtn} onPress={() => closeModal()}>
+                  <Text style={styles.modalText}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.modalBtn}
+                  onPress={() => handleClickEvent()}>
+                  <Text style={styles.modalText}>Done</Text>
+                </Pressable>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    // </ScrollView>
   );
 };
 

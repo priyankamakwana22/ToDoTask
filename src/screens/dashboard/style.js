@@ -26,16 +26,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   txt: {fontSize: 20, fontWeight: 'bold', color: '#ffff'},
-  //flatlist
-  flView: {
-    borderColor: '#6CB4EE',
-    borderWidth: 1,
-    borderRadius: 5,
-    margin: 20,
-    padding: 15,
-  },
-  listTitle: {fontSize: 30, fontWeight: '500', color: '#000000'},
-  listDesc: {fontSize: 18, color: '#000000', marginLeft: 15, marginTop: 10},
+  
   //modal
   centeredView: {
     flex: 1,
@@ -78,7 +69,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 40,
   },
-  //radio
+  
+//flatlist
+flView: {
+  borderColor: '#6CB4EE',
+  borderWidth: 1,
+  flex:1,
+  flexDirection: 'row',
+  borderRadius: 5,
+  margin: 20,
+  padding: 15,
+  alignItems: 'center',
+   
+  // justifyContent:'center'
+},
+listTitle: {fontSize: 30, fontWeight: '500', color: '#000000'},
+listDesc: {fontSize: 18, color: '#000000', marginLeft: 15, marginTop: 10},
 
 });
 
