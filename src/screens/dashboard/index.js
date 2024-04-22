@@ -25,30 +25,53 @@ const Dashboard = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [update, setUpdate] = useState(false);
+  const [currentId, setCurrentId] = useState('');
+  let [update, setUpdate] = useState(false);
   const [selectedId, setSelectedId] = useState(''); // for radio button
+
+  console.log('Update', update);
+
+  // const updateDone = (index) => {
+  //   let newData = {
+  //     id: todoData[index].id,
+  //     title: title,
+  //     description: description,
+  //     selectedId: selectedId,
+  //   };
+
+  //   let newTodo = [...todoData];
+  //   newTodo[index] = newData; // Corrected assignment
+  // };
 
   const handleClickOnTodo = (item, index) => {
     setUpdate(true);
     openModal();
-    setTitle(todoData[index].title);
-    setDescription(todoData[index].description);
-    setSelectedId(todoData[index].selectedId);
-    
+    setTitle(item.title);
+    setDescription(item.description);
+    setSelectedId(item.selectedId);
+    setCurrentId(item.id);
   };
-  const updateDone = (item, index) => {
-    console.log('🚀 ~ updateDone ~ index:', index);
+
+  console.log('🚀 ~ Dashboard ~ todoData:', currentId);
+  const updateDone = () => {
     let newData = {
-      id: todoData[index].id,
+      id: currentId,
       title: title,
       description: description,
       selectedId: selectedId,
     };
 
-    console.log('Updateed');
+    console.log('Updated');
     let newTodo;
     newTodo = [...todoData];
-    newTodo[todoData[index]] = newData;
+    const index = todoData.findIndex(item => item.id === currentId);
+    console.log(index);
+    newTodo[index] = newData;
+    dispatch(addTodo(newTodo));
+    setTitle('');
+    setDescription('');
+    setShowModal(false);
+    setUpdate(false)
   };
 
   const handleAddTodo = () => {
@@ -76,11 +99,11 @@ const Dashboard = () => {
       }
     }
   };
-  const handleClickEvent = (index) => {
+  const handleClickEvent = index => {
     if (update) {
-      handleAddTodo();
+      updateDone();
     } else {
-      updateDone(index)
+      handleAddTodo();
     }
   };
 
