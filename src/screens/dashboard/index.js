@@ -1,4 +1,3 @@
-import {useMemo, useState} from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -6,16 +5,27 @@ import {
   Modal,
   TextInput,
   Pressable,
-  FlatList,
   Alert,
   ScrollView,
 } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {useMemo, useState} from 'react';
+
 import styles from './style';
-import {useSelector, useDispatch} from 'react-redux';
-import RadioGroup from 'react-native-radio-buttons-group';
 import {addTodo} from '../../redux/Action';
 import ListComponent from '../ListComponent';
+
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {Keyboard} from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
+import RadioGroup from 'react-native-radio-buttons-group';
+
+const Heading = props => {
+  return (
+    <View style={styles.txtBorder}>
+      <Text style={styles.txt}>{props.title}</Text>
+    </View>
+  );
+};
 
 const Dashboard = () => {
   const todoData = useSelector(state => state.todoData);
@@ -98,7 +108,8 @@ const Dashboard = () => {
       }
     }
   };
-  const handleClickEvent = index => {
+  const handleClickEvent = () => {
+    Keyboard.dismiss(); // To close the keyboard
     if (update) {
       updateDone();
     } else {
@@ -153,91 +164,99 @@ const Dashboard = () => {
     ],
     [],
   );
-
   return (
     <View style={{flex: 1}}>
-      <ScrollView>
+      <ScrollView nestedScrollEnabled={true}>
         <View style={styles.container}>
           <View>
-            <View style={styles.txtBorder}>
-              <Text style={styles.txt}>To Do</Text>
-            </View>
+            <Heading title="Todo" />
+            <ListComponent
+              selectedId="1"
+              deleteTask={deleteTask}
+              handleClickOnTodo={handleClickOnTodo}
+              todoData={todoData}
+            />
 
-            <ListComponent selectedId="1" />
+            <Heading title="In Progress" />
+            <ListComponent
+              selectedId="2"
+              deleteTask={deleteTask}
+              handleClickOnTodo={handleClickOnTodo}
+              todoData={todoData}
+            />
 
-            <View style={styles.txtBorder}>
-              <Text style={styles.txt}>In Progress</Text>
-            </View>
+            <Heading title="Testing" />
+            <ListComponent
+              selectedId="3"
+              deleteTask={deleteTask}
+              handleClickOnTodo={handleClickOnTodo}
+              todoData={todoData}
+            />
 
-            <ListComponent selectedId="2" />
-
-            <View style={styles.txtBorder}>
-              <Text style={styles.txt}>Testing</Text>
-            </View>
-
-            <ListComponent selectedId="3" />
-
-            <View style={styles.txtBorder}>
-              <Text style={styles.txt}>Done</Text>
-            </View>
-
-            <ListComponent selectedId="4" />
+            <Heading title="Done" />
+            <ListComponent
+              selectedId="4"
+              deleteTask={deleteTask}
+              handleClickOnTodo={handleClickOnTodo}
+              todoData={todoData}
+            />
           </View>
-
-          <Modal
-            visible={showModal}
-            onRequestClose={() => setShowModal(false)}
-            animationType="slide"
-            transparent>
-            <TouchableOpacity
-              style={styles.centeredView}
-              onPress={() => closeModal()}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Add Note</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  placeholder="Title for note"
-                  value={title}
-                  onChangeText={title => setTitle(title)}
-                />
-                <TextInput
-                  style={styles.modalInput}
-                  placeholder="Note"
-                  value={description}
-                  onChangeText={description => setDescription(description)}
-                />
-                <View style={styles.radioView}>
-                  <RadioGroup
-                    labelStyle={{}}
-                    radioButtons={radioButtons}
-                    onPress={setSelectedId}
-                    selectedId={selectedId}
-                    containerStyle={{
-                      alignItems: 'flex-start',
-                    }}
-                  />
-                </View>
-
-                <View style={styles.btns}>
-                  <Pressable
-                    style={styles.modalBtn}
-                    onPress={() => closeModal()}>
-                    <Text style={styles.modalText}>Cancel</Text>
-                  </Pressable>
-                  <Pressable
-                    style={styles.modalBtn}
-                    onPress={() => handleClickEvent()}>
-                    <Text style={styles.modalText}>Done</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </Modal>
         </View>
       </ScrollView>
       <TouchableOpacity style={styles.plusBtn} onPress={() => openModal()}>
         <FontAwesome5 name={'plus'} size={25} color={'#000000'} />
       </TouchableOpacity>
+      <Modal
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+        animationType="slide"
+        transparent>
+        <TouchableOpacity
+          style={styles.centeredView}
+          onPress={() => closeModal()}>
+          <TouchableOpacity
+            style={styles.modalView}
+            activeOpacity={1}
+            pointerEvents="none">
+            {' '}
+            // so that the modal does not close
+            <Text style={styles.modalText}>Add Note</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Title for note"
+              value={title}
+              onChangeText={title => setTitle(title)}
+            />
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Note"
+              value={description}
+              onChangeText={description => setDescription(description)}
+            />
+            <View style={styles.radioView}>
+              <RadioGroup
+                labelStyle={{}}
+                radioButtons={radioButtons}
+                onPress={setSelectedId}
+                selectedId={selectedId}
+                containerStyle={{
+                  alignItems: 'flex-start',
+                }}
+              />
+            </View>
+            <View style={styles.btns}>
+              <Pressable style={styles.modalBtn} onPress={() => closeModal()}>
+                <Text style={styles.modalText}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalBtn}
+                onPress={() => handleClickEvent()}>
+                <Text style={styles.modalText}>Done</Text>
+              </Pressable>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 };
