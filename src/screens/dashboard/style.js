@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {flex: 1, marginTop: 20, margin: 10},
+  container: { marginTop: 20, margin: 10},
   plusBtn: {
     height: 60,
     width: 60,

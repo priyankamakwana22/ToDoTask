@@ -15,6 +15,7 @@ import styles from './style';
 import {useSelector, useDispatch} from 'react-redux';
 import RadioGroup from 'react-native-radio-buttons-group';
 import {addTodo} from '../../redux/Action';
+import ListComponent from '../ListComponent';
 
 const Dashboard = () => {
   const todoData = useSelector(state => state.todoData);
@@ -31,18 +32,6 @@ const Dashboard = () => {
 
   console.log('Update', update);
 
-  // const updateDone = (index) => {
-  //   let newData = {
-  //     id: todoData[index].id,
-  //     title: title,
-  //     description: description,
-  //     selectedId: selectedId,
-  //   };
-
-  //   let newTodo = [...todoData];
-  //   newTodo[index] = newData; // Corrected assignment
-  // };
-
   const handleClickOnTodo = (item, index) => {
     setUpdate(true);
     openModal();
@@ -53,6 +42,7 @@ const Dashboard = () => {
   };
 
   console.log('🚀 ~ Dashboard ~ todoData:', currentId);
+  console.log('🚀 ~ Dashboard ~ todoData:', selectedId);
   const updateDone = () => {
     let newData = {
       id: currentId,
@@ -60,13 +50,22 @@ const Dashboard = () => {
       description: description,
       selectedId: selectedId,
     };
+    console.log('🚀 ~ updateDone ~ newData:', newData);
 
     console.log('Updated');
     let newTodo;
     newTodo = [...todoData];
-    const index = todoData.findIndex(item => item.id === currentId);
+    let index;
+
+    index = todoData.findIndex(item => item.id === currentId);
+
     console.log(index);
-    newTodo[index] = newData;
+    if (selectedId !== todoData[index].selectedId) {
+      newTodo.splice(index, 1);
+      newTodo.push(newData);
+    } else {
+      newTodo[index] = newData;
+    }
     dispatch(addTodo(newTodo));
     setTitle('');
     setDescription('');
@@ -132,7 +131,7 @@ const Dashboard = () => {
   const radioButtons = useMemo(
     () => [
       {
-        id: '1', // will have unique key
+        id: '1',
         label: 'To do',
         value: 'option1',
       },
@@ -156,7 +155,7 @@ const Dashboard = () => {
   );
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <ScrollView>
         <View style={styles.container}>
           <View>
@@ -164,147 +163,25 @@ const Dashboard = () => {
               <Text style={styles.txt}>To Do</Text>
             </View>
 
-            <FlatList
-              nestedScrollEnabled={true}
-              data={todoData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item, index}) => {
-                if (item.selectedId === '1') {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => handleClickOnTodo(item, index)}>
-                      <View style={styles.flView}>
-                        <View style={{flex: 9}}>
-                          <Text numberOfLines={1} style={styles.listTitle}>
-                            {item.title}
-                          </Text>
-                          <Text numberOfLines={3} style={styles.listDesc}>
-                            {item.description}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={{flex: 1}}
-                          onPress={() => deleteTask(item.id)}>
-                          <FontAwesome5
-                            name={'trash'}
-                            size={25}
-                            color={'red'}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                }
-              }}
-            />
+            <ListComponent selectedId="1" />
 
             <View style={styles.txtBorder}>
               <Text style={styles.txt}>In Progress</Text>
             </View>
 
-            <FlatList
-              nestedScrollEnabled={true}
-              data={todoData}
-              renderItem={({item, index}) => {
-                if (item.selectedId === '2') {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => handleClickOnTodo(item, index)}>
-                      <View style={styles.flView}>
-                        <View style={{flex: 9}}>
-                          <Text numberOfLines={1} style={styles.listTitle}>
-                            {item.title}
-                          </Text>
-                          <Text numberOfLines={3} style={styles.listDesc}>
-                            {item.description}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={{flex: 1}}
-                          onPress={() => deleteTask(item.id)}>
-                          <FontAwesome5
-                            name={'trash'}
-                            size={25}
-                            color={'red'}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                }
-              }}
-            />
+            <ListComponent selectedId="2" />
+
             <View style={styles.txtBorder}>
               <Text style={styles.txt}>Testing</Text>
             </View>
 
-            <FlatList
-              nestedScrollEnabled={true}
-              data={todoData}
-              renderItem={({item}) => {
-                if (item.selectedId === '3') {
-                  return (
-                    <TouchableOpacity onPress={() => handleClickOnTodo()}>
-                      <View style={styles.flView}>
-                        <View style={{flex: 9, elevation: 10}}>
-                          <Text numberOfLines={1} style={styles.listTitle}>
-                            {item.title}
-                          </Text>
-                          <Text numberOfLines={3} style={styles.listDesc}>
-                            {item.description}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={{flex: 1}}
-                          onPress={() => deleteTask(item.id)}>
-                          <FontAwesome5
-                            name={'trash'}
-                            size={25}
-                            color={'red'}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                }
-              }}
-            />
+            <ListComponent selectedId="3" />
+
             <View style={styles.txtBorder}>
               <Text style={styles.txt}>Done</Text>
             </View>
 
-            <FlatList
-              nestedScrollEnabled={true}
-              data={todoData}
-              renderItem={({item, index}) => {
-                if (item.selectedId === '4') {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => handleClickOnTodo(item, index)}>
-                      <View style={styles.flView}>
-                        <View style={{flex: 9,}}>
-                          <Text numberOfLines={1} style={styles.listTitle}>
-                            {item.title}
-                          </Text>
-                          <Text numberOfLines={3} style={styles.listDesc}>
-                            {item.description}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={{flex: 1}}
-                          onPress={() => deleteTask(item.id)}>
-                          <FontAwesome5
-                            name={'trash'}
-                            size={25}
-                            color={'red'}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                }
-              }}
-            />
+            <ListComponent selectedId="4" />
           </View>
 
           <Modal
