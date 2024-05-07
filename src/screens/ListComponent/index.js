@@ -9,7 +9,7 @@ const ListComponent = (props) => {
   // console.log("🚀 ~ ListComponent ~ todoData:", todoData)
   return(
     <FlatList
-              nestedScrollEnabled={true}
+              // nestedScrollEnabled={true}
               data={props.todoData}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => {

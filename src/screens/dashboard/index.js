@@ -166,7 +166,7 @@ const Dashboard = () => {
   );
   return (
     <View style={{flex: 1}}>
-      <ScrollView nestedScrollEnabled={true}>
+      <ScrollView>
         <View style={styles.container}>
           <View>
             <Heading title="Todo" />
@@ -218,8 +218,7 @@ const Dashboard = () => {
             style={styles.modalView}
             activeOpacity={1}
             pointerEvents="none">
-            {' '}
-            // so that the modal does not close
+             {/* so that the modal does not close */}
             <Text style={styles.modalText}>Add Note</Text>
             <TextInput
               style={styles.modalInput}
